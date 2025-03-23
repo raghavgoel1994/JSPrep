@@ -1,0 +1,64 @@
+The difference in context handling between arrow functions and regular functions in JavaScript stems from how they treat the `this` keyword.
+
+**Regular Functions:**
+
+* **Dynamic `this`:**
+    * The value of `this` inside a regular function is dynamic and depends on how the function is called.
+    * It can vary based on the calling context.
+    * For example:
+        * If a function is called as a method of an object (`obj.myFunction()`), `this` refers to the object (`obj`).
+        * If a function is called as a standalone function (`myFunction()`), `this` might refer to the global object (in non-strict mode) or be `undefined` (in strict mode).
+        * If a function is used as a constructor (`new myFunction()`), `this` refers to the newly created object.
+        * Inside of a setTimeout call, this will refer to the global object, or undefined in strict mode.
+* **`apply`, `call`, and `bind`:**
+    * Regular functions have methods like `apply`, `call`, and `bind` that allow you to explicitly set the `this` value.
+
+**Arrow Functions:**
+
+* **Lexical `this`:**
+    * Arrow functions do *not* have their own `this` context.
+    * Instead, they inherit the `this` value from their enclosing lexical scope (the scope in which they are defined).
+    * This means that `this` inside an arrow function always refers to the `this` value of the surrounding code.
+* **No `apply`, `call`, or `bind` (Effectively):**
+    * While you can technically use `apply`, `call`, or `bind` with arrow functions, they won't change the `this` value. The `this` value will still be determined by the lexical scope.
+
+**Key Differences Summarized:**
+
+* **Dynamic vs. Lexical:**
+    * Regular functions have a dynamic `this`, while arrow functions have a lexical `this`.
+* **Context Determination:**
+    * The `this` value in regular functions depends on how they are called.
+    * The `this` value in arrow functions is determined by their surrounding lexical scope.
+* **Context Manipulation:**
+    * Regular functions allow you to explicitly set the `this` value using `apply`, `call`, or `bind`.
+    * Arrow functions do not allow you to change their `this` value.
+
+**Why the Difference?**
+
+* Arrow functions were introduced in ES6 (ECMAScript 2015) to provide a more concise syntax and to address common `this` context issues that developers often encountered with regular functions.
+* The lexical `this` behavior of arrow functions makes them particularly useful for callbacks and other scenarios where you want to preserve the `this` value of the enclosing scope.
+
+**Example:**
+
+```javascript
+function RegularFunction() {
+  this.value = 'regular';
+
+  setTimeout(function() {
+    console.log(this.value); // 'this' might be undefined or the global object
+  }, 100);
+}
+
+function ArrowFunction() {
+  this.value = 'arrow';
+
+  setTimeout(() => {
+    console.log(this.value); // 'this' refers to the ArrowFunction instance
+  }, 100);
+}
+
+new RegularFunction(); // Output: undefined (or error in strict mode)
+new ArrowFunction(); // Output: arrow
+```
+
+In this example, the arrow function correctly preserves the `this` context of the `ArrowFunction` instance, while the regular function loses the context.
